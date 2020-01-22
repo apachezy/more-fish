@@ -13,10 +13,7 @@ import org.bukkit.plugin.Plugin
 /**
  * Created by elsiff on 2018-12-28.
  */
-class FishItemStackConverter(
-    plugin: Plugin,
-    fishTypeTable: FishTypeTable
-) {
+class FishItemStackConverter(plugin: Plugin, fishTypeTable: FishTypeTable) {
     private val fishReader: FishItemTagReader
     private val fishWriter: FishItemTagWriter
 
@@ -31,11 +28,11 @@ class FishItemStackConverter(
     }
 
     fun isFish(itemStack: ItemStack): Boolean {
-        return fishReader.canRead(itemStack.itemMeta)
+        return fishReader.canRead(itemStack.itemMeta!!)
     }
 
     fun fish(itemStack: ItemStack): Fish {
-        return fishReader.read(itemStack.itemMeta)
+        return fishReader.read(itemStack.itemMeta!!)
     }
 
     fun createItemStack(fish: Fish, catcher: Player): ItemStack {
@@ -43,7 +40,7 @@ class FishItemStackConverter(
         if (!fish.type.hasNotFishItemFormat) {
             val replacement = getFormatReplacementMap(fish, catcher)
             itemStack.edit<ItemMeta> {
-                displayName = formatConfig.format("display-name").replace(replacement).output(catcher)
+                setDisplayName(formatConfig.format("display-name").replace(replacement).output(catcher))
                 lore = formatConfig.formats("lore").replace(replacement).output(catcher)
                 fishWriter.write(this, fish)
             }
@@ -53,11 +50,11 @@ class FishItemStackConverter(
 
     private fun getFormatReplacementMap(fish: Fish, catcher: Player): Map<String, String> {
         return mapOf(
-            "%player%" to catcher.name,
-            "%rarity%" to fish.type.rarity.name.toUpperCase(),
-            "%rarity_color%" to fish.type.rarity.color.toString(),
-            "%length%" to fish.length.toString(),
-            "%fish%" to fish.type.displayName
+                "%player%" to catcher.name,
+                "%rarity%" to fish.type.rarity.name.toUpperCase(),
+                "%rarity_color%" to fish.type.rarity.color.toString(),
+                "%length%" to fish.length.toString(),
+                "%fish%" to fish.type.displayName
         )
     }
 }

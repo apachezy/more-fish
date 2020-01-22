@@ -47,14 +47,19 @@ class FishingListener(
             if (Config.standard.boolean("general.no-fishing-unless-contest") && !competition.isEnabled()) {
                 event.isCancelled = true
                 event.player.sendMessage(Lang.text("no-fishing-allowed"))
-            } else if (canReplaceVanillaFishing(event)) {
-                val caught = event.caught as Item
-                val fish = fishTypeTable.pickRandomType(caught, event.player, competition).generateFish()
+            } else {
+                val loc = event.hook.location;
+                if (loc.blockX >= 17 && loc.blockZ >= 17 && loc.blockX <= 39 && loc.blockZ <= 39) {
+                    if (canReplaceVanillaFishing(event)) {
+                        val caught = event.caught as Item
+                        val fish = fishTypeTable.pickRandomType(caught, event.player, competition).generateFish()
 
-                for (handler in catchHandlersOf(event, fish)) {
-                    handler.handle(event.player, fish)
+                        for (handler in catchHandlersOf(event, fish)) {
+                            handler.handle(event.player, fish)
+                        }
+                        caught.setItemStack(converter.createItemStack(fish, event.player))
+                    }
                 }
-                caught.itemStack = converter.createItemStack(fish, event.player)
             }
         }
     }

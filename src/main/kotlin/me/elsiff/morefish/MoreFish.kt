@@ -6,6 +6,7 @@ import me.elsiff.egui.GuiRegistry
 import me.elsiff.morefish.command.MainCommand
 import me.elsiff.morefish.configuration.Config
 import me.elsiff.morefish.dao.DaoFactory
+import me.elsiff.morefish.fishing.FishPond
 import me.elsiff.morefish.fishing.FishingListener
 import me.elsiff.morefish.fishing.MutableFishTypeTable
 import me.elsiff.morefish.fishing.catchhandler.CatchBroadcaster

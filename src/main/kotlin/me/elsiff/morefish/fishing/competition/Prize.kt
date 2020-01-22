@@ -14,11 +14,14 @@ class Prize(
         if (!player.isOnline) {
             val ordinal = NumberUtils.ordinalOf(rankNumber)
             plugin.logger.warning("$ordinal fisher ${player.name} isn't online! Contest prizes may not be sent.")
+            return
         }
 
         val server = plugin.server
         for (command in commands) {
-            server.dispatchCommand(server.consoleSender, command.replace("@p", player.name))
+            if (player.name != null) {
+                server.dispatchCommand(server.consoleSender, command.replace("@p", player.name!!, true))
+            }
         }
     }
 }

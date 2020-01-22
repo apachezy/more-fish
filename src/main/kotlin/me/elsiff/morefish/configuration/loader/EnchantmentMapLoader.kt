@@ -14,6 +14,9 @@ class EnchantmentMapLoader : CustomLoader<Map<Enchantment, Int>> {
                 val tokens = it.split(DELIMITER)
                 val enchantment = Enchantment.getByKey(NamespacedKey.minecraft(tokens[0]))
                 val level = tokens[1].toInt()
+                if (enchantment == null) {
+                    return emptyMap()
+                }
                 Pair<Enchantment, Int>(enchantment, level)
             }.toMap()
         } else {

@@ -21,6 +21,7 @@ abstract class ConfigurationValueAccessor {
             path, currentSection::getConfigurationSection,
             currentSection::isConfigurationSection, null
         )
+        require(handle != null)
         return ConfigurationSectionAccessor(handle)
     }
 
@@ -55,8 +56,12 @@ abstract class ConfigurationValueAccessor {
             currentSection.isLong(it) || currentSection.isInt(it)
         }, default)
 
-    fun string(path: String, default: String? = null): String =
-        findValue(path, currentSection::getString, currentSection::isString, default)
+    fun string(path: String, default: String? = null): String {
+        val result = findValue(path, currentSection::getString, currentSection::isString, default)
+        require(result != null)
+        return result
+    }
+
 
     fun strings(path: String, default: List<String>? = null): List<String> =
         findValue(path, currentSection::getStringList, currentSection::isList, default)

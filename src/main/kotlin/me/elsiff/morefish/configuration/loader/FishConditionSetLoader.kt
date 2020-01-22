@@ -25,11 +25,11 @@ class FishConditionSetLoader : CustomLoader<Set<FishCondition>> {
 
     override fun loadFrom(section: ConfigurationValueAccessor, path: String): Set<FishCondition> {
         return if (section.contains(path)) {
-            section.strings(path).map {
+            section.strings(path).mapNotNull {
                 it.split(DELIMITER).let { tokens ->
                     fishConditionFrom(
-                        id = tokens[0],
-                        args = tokens.subList(1, tokens.size)
+                            id = tokens[0],
+                            args = tokens.subList(1, tokens.size)
                     )
                 }
             }.toSet()
@@ -38,7 +38,8 @@ class FishConditionSetLoader : CustomLoader<Set<FishCondition>> {
         }
     }
 
-    private fun fishConditionFrom(id: String, args: List<String>): FishCondition {
+    // 让条件可空，如果返回的是空的，则不添加到列表中
+    private fun fishConditionFrom(id: String, args: List<String>): FishCondition? {
         return when (id) {
             "raining" ->
                 RainingCondition(args[0].toBoolean())
@@ -48,11 +49,14 @@ class FishConditionSetLoader : CustomLoader<Set<FishCondition>> {
                 TimeCondition(TimeCondition.TimeState.valueOf(args[0].toUpperCase()))
             "biome" ->
                 BiomeCondition(args.map { Biome.valueOf(it.toUpperCase()) })
-            "enchantment" ->
-                EnchantmentCondition(
-                    Enchantment.getByKey(NamespacedKey.minecraft(args[0])),
-                    args[1].toInt()
-                )
+            "enchantment" -> {
+                val en = Enchantment.getByKey(NamespacedKey.minecraft(args[0]))
+                return if (en == null) {
+                    null
+                } else {
+                    EnchantmentCondition(en, args[1].toInt())
+                }
+            }
             "level" ->
                 XpLevelCondition(args[0].toInt())
             "contest" ->
